@@ -1,13 +1,57 @@
 import React, { useState } from 'react';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { Layout, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { Layout, ZoomIn, ZoomOut, RotateCcw, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import FlowchartNode from './components/FlowchartNode';
 import Modal from './components/Modal';
 import { governanceData } from './data';
 
+// --- COMPONENTE: CAPA (SLIDE 0) ---
+const CoverSlide = ({ onNext }) => {
+  return (
+    <div className="h-screen w-full bg-gradient-to-br from-[#225B8E] to-[#2A898D] flex flex-col items-center justify-center relative overflow-hidden">
+      {/* Elementos decorativos de fundo */}
+      <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#45C5DE]/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-center z-10 px-4"
+      >
+        <h1 className="font-rubik font-bold text-5xl md:text-7xl text-white mb-4 drop-shadow-md">
+          Plano de Governança Locker
+        </h1>
+        <p className="font-poppins text-xl md:text-2xl text-white/90 font-light tracking-wide">
+          Estratégia de Eficiência Fora da PA
+        </p>
+      </motion.div>
+
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onNext}
+        className="absolute bottom-12 right-12 bg-white text-[#225B8E] px-8 py-4 rounded-full font-rubik font-bold shadow-lg flex items-center gap-2 hover:bg-[#45C5DE] hover:text-white transition-all group cursor-pointer z-50"
+      >
+        Iniciar Apresentação
+        <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+      </motion.button>
+    </div>
+  );
+};
+
+// --- COMPONENTE PRINCIPAL ---
 function App() {
+  const [currentSlide, setCurrentSlide] = useState(0); // 0 = Capa, 1 = Fluxograma
   const [selectedNode, setSelectedNode] = useState(null);
 
+  // Se o slide for 0, mostra a capa
+  if (currentSlide === 0) {
+    return <CoverSlide onNext={() => setCurrentSlide(1)} />;
+  }
+
+  // Se o slide for 1, mostra a aplicação principal com Zoom
   return (
     <div className="h-screen w-screen flex bg-gray-50 overflow-hidden font-poppins text-gray-900">
       
@@ -32,8 +76,17 @@ function App() {
             </h1>
             <p className="text-sm text-gray-500">Fluxo interativo de capacitação</p>
           </div>
-          <div className="bg-blue-50 px-3 py-1 rounded-full text-xs font-semibold text-blue-700 border border-blue-100">
-            v2.0 Locker
+          <div className="flex items-center gap-4">
+             {/* Botão para voltar para a capa (opcional) */}
+             <button 
+                onClick={() => setCurrentSlide(0)}
+                className="text-xs text-gray-400 hover:text-[#225B8E] transition-colors underline"
+             >
+                Voltar ao Início
+             </button>
+             <div className="bg-blue-50 px-3 py-1 rounded-full text-xs font-semibold text-blue-700 border border-blue-100">
+                v2.0 Locker
+             </div>
           </div>
         </header>
 
